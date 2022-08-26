@@ -3,10 +3,10 @@
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <!--     <logger name="org.springframework.web" level="INFO"/> -->
     <appender name="dailyRollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>logs/campusBD.log</File>
+        <File>/Users/xiaozhe/Desktop/desk_test/logs/campusBD.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover 保存历史记录到这个文件夹一日起为后缀 -->
-            <FileNamePattern>logs/mqdesys.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <FileNamePattern>/Users/xiaozhe/Desktop/desk_test/logs/mqdesys.%d{yyyy-MM-dd}.log</FileNamePattern>
             <!-- keep 30 days' worth of history -->
             <maxHistory>10</maxHistory>
         </rollingPolicy>
