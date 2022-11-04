@@ -40,6 +40,7 @@ public class yizhiApplication extends SpringBootServletInitializer{
     public static void main(String[] args) {
         SpringApplication.run(yizhiApplication.class, args);
         System.out.println("ヾ(◍°∇°◍)ﾉﾞ    yizhi启动成功      ヾ(◍°∇°◍)ﾉﾞ\n");
+        NewmanUtils.run(args,context);
     }
 
 
