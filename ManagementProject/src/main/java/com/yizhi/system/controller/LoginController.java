@@ -84,9 +84,10 @@ public class LoginController extends BaseController {
 	@ResponseBody
 	R ajaxLogin(HttpServletRequest httpServletRequest,String username, String password, String code) {
 		String captchaId = (String) httpServletRequest.getSession().getAttribute("vrifyCode");
+        /*关闭验证码验证
 		if(code==null || captchaId==null||!code.toUpperCase().equals(captchaId.toUpperCase())){
 			return R.error("验证码错误");
-		}
+		}*/
 		password = MD5Utils.encrypt(username, password);
 		CustomizedToken token = new CustomizedToken(username,password);
 		Subject subject = SecurityUtils.getSubject();
