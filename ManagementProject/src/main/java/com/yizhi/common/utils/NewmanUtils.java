@@ -19,7 +19,7 @@ public class NewmanUtils {
             String jsonpath = argArr[1];
             System.out.println(reportPath);
             System.out.println(jsonpath);
-            String cmd = "newman run " + jsonpath + File.separator + NEWMAN_RUN_JSON + " -e " + jsonpath + File.separator + NEWMAN_ENVIRONMENT_JSON + " -r json --reporter-json-export " + reportPath;
+            String cmd = "newman run " + jsonpath + File.separator + NEWMAN_RUN_JSON + " -g " + jsonpath + File.separator + NEWMAN_ENVIRONMENT_JSON + " -r json --reporter-json-export " + reportPath;
             CmdUtil.executeCmd(cmd);
 
             try {
