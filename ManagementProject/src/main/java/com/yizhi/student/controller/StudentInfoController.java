@@ -44,8 +44,8 @@ public class StudentInfoController {
 	@PostMapping("/save")
 	@RequiresPermissions("student:studentInfo:add")
 	public R save(StudentInfoDO studentInfoDO){
-		int save = studentInfoService.save(studentInfoDO);
-		return save == 1 ? R.ok("添加成功") : R.error("添加失败");
+	
+		return null;
 	}
 
 	/**
