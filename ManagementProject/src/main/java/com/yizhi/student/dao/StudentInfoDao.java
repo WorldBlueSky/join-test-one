@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 /**
- * 生基础信息表
+ * 学生基础信息表
  * @author dunhf
  * @email 499345515@qq.com
  * @date 2019-08-01 09:45:46
@@ -27,7 +27,7 @@ public interface StudentInfoDao {
 	
 	int update(StudentInfoDO studentInfo);
 	
-	int remove(Integer id);
+	int remove(@Param("id") Integer id);
 	
-	int batchRemove(Integer[] ids);
+	int batchRemove(@Param("ids") Integer[] ids);
 }

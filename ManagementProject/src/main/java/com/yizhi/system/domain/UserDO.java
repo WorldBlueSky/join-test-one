@@ -87,6 +87,7 @@ public class UserDO implements Serializable {
 
     /**
      * 获取：
+     * @return
      */
     public Long getUserId() {
         return userId;

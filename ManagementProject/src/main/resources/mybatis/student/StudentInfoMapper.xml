@@ -2,8 +2,141 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.yizhi.student.dao.StudentInfoDao">
-	
-	
+
+    <sql id="StudentColumns">
+        a.id,
+        a.student_id,
+        a.exam_id,
+        a.class_id,
+        a.student_name,
+        a.certify,
+        a.mail_address,
+        a.foreign_lanaguage,
+        a.student_sex,
+        a.nation,
+        a.political,
+        a.card_id,
+        a.telephone,
+        a.subject_type,
+        a.tocollege,
+        a.tocampus,
+        a.tomajor,
+        a.birthplace,
+        a.grade,
+        a.isstate,
+        a.birthday,
+        a.note,
+        a.add_time,
+        a.add_userid,
+        a.edit_time,
+        a.edit_userid,
+        sclass.class_name,
+        scollege.college_name,
+        smajor.major_name
+    </sql>
+
+    <sql id="StudentJoins">
+        left join sys_class sclass on sclass.id=a.class_id
+        left join sys_college scollege on scollege.id=a.tocollege
+        left join sys_major smajor on smajor.id=a.tomajor
+    </sql>
+
+    <!--  根据用户填写的信息进行增加,同时录入人\录入时间填入其中-->
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into s_student_info(student_id,exam_id,class_id,student_name,certify,mail_address,
+                                   foreign_lanaguage,student_sex,nation,political,card_id,
+                                   telephone,subject_type,tocollege,tomajor,birthplace,grade,isstate,
+                                   birthday,note,add_time,add_userid)
+                            values(#{studentId},#{examId},#{classId},#{studentName},#{certify},
+                                #{mailAddress},#{foreignLanaguage},#{studentSex},#{nation},
+                                #{political},#{cardId},#{telephone},#{subjectType},#{tocollege},
+                                #{tomajor},#{birthplace},#{grade},#{isstate},#{birthday},#{note},
+                                now(),#{addUserid})
+    </insert>
+
+<!--  根据用户填写的信息进行修改,同时修改人\修改时间填入其中-->
+    <update id="update" parameterType="com.yizhi.student.domain.StudentInfoDO" >
+        update s_student_info
+        <set>
+            <if test="studentName!=null ">student_name = #{studentName}, </if>
+            <if test="certify!=null ">certify = #{certify}, </if>
+            <if test="mailAddress!=null ">mail_address = #{mailAddress} ,</if>
+            <if test="foreignLanaguage!=null ">foreign_lanaguage = #{foreignLanaguage}, </if>
+            <if test="studentSex!=null ">student_sex = #{studentSex}, </if>
+            <if test="nation!=null ">nation = #{nation} ,</if>
+            <if test="political!=null ">political = #{political}, </if>
+            <if test="examId!=null ">exam_id = #{examId}, </if>
+            <if test="classId!=null ">class_id = #{classId} ,</if>
+            <if test="studentId!=null ">student_id = #{studentId} ,</if>
+            <if test="cardId!=null ">card_id = #{cardId} ,</if>
+            <if test="telephone!=null ">telephone = #{telephone} ,</if>
+            <if test="subjectType!=null ">subject_type = #{subjectType} ,</if>
+            <if test="tocollege!=null ">tocollege = #{tocollege} ,</if>
+            <if test="tomajor!=null ">tomajor = #{tomajor} ,</if>
+            <if test="birthplace!=null ">birthplace = #{birthday} ,</if>
+            <if test="grade!=null ">grade = #{grade} ,</if>
+            <if test="isstate!=null ">isstate = #{isstate} ,</if>
+            <if test="birthday!=null ">birthday = #{birthday} ,</if>
+            <if test="note!=null ">note = #{note} ,</if>
+            edit_time=now(),edit_userid=#{editUserid}
+        </set>
+        where id = #{id}
+    </update>
+
+<!--    删除对应id的学生信息-->
+    <delete id="remove">
+        delete from s_student_info where id = #{id}
+    </delete>
+
+<!--    根据id 数组进行批量删除，用到for-each 循环遍历数组即可-->
+    <delete id="batchRemove">
+        delete from s_student_info where id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
 
 
+    <select id="list" resultType="com.yizhi.student.domain.StudentInfoDO">
+        select
+            <include refid="StudentColumns"/>
+        from s_student_info a
+            <include refid="StudentJoins"/>
+          <where>
+              <if test="classId != null and classId != ''">and a.class_id = #{classId}</if>
+              <if test="name != null and name != ''"> and a.student_name LIKE CONCAT('%',#{name},'%')</if>
+              <if test="tocollegeId != null and tocollegeId != ''">and a.tocollege = #{tocollegeId}</if>
+              <if test="tomajorId != null and tomajorId != ''">and a.tomajor = #{tomajorId}</if>
+          </where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+            <otherwise>
+                order by a.student_id asc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        select count(*) from s_student_info a
+        <include refid="StudentJoins"/>
+        <where>
+            <if test="classId != null and classId != ''">and a.class_id = #{classId}</if>
+            <if test="name != null and name != ''"> and a.student_name LIKE CONCAT('%',#{name},'%')</if>
+            <if test="tocollegeId != null and tocollegeId != ''">and a.tocollege = #{tocollegeId}</if>
+            <if test="tomajorId != null and tomajorId != ''">and a.tomajor = #{tomajorId}</if>
+        </where>
+    </select>
+
+    <select id="get" resultType="com.yizhi.student.domain.StudentInfoDO">
+        select
+            <include refid="StudentColumns"/>
+        from s_student_info a
+            <include refid="StudentJoins"/>
+        where a.id = #{value}
+    </select>
 </mapper>

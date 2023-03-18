@@ -1,10 +1,14 @@
 package com.yizhi.student.service.impl;
 
+import com.yizhi.common.redis.shiro.RedisCache;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.yizhi.student.dao.StudentInfoDao;
 import com.yizhi.student.domain.StudentInfoDO;
@@ -15,20 +19,26 @@ import com.yizhi.student.service.StudentInfoService;
 @Service
 public class StudentInfoServiceImpl implements StudentInfoService {
 
-
+//    @Autowired
+//	RedisCache<String, Object> redisCache;
 
 	@Autowired
 	private StudentInfoDao studentInfoDao;
 	
 	@Override
 	public StudentInfoDO get(Integer id){
-		System.out.println("======service层中传递过来的id参数是：" + id + "======");
 		return studentInfoDao.get(id);
 	}
 
 
 	@Override
 	public List<StudentInfoDO> list(Map<String, Object> map){
+
+//		System.out.println("map 传递的数据到底是什么?????????????????????");
+//		for (Map.Entry<String,Object> entry:map.entrySet()) {
+//			System.out.println(entry.getKey() +":"+ entry.getValue());
+//		}
+
 		return studentInfoDao.list(map);
 	}
 

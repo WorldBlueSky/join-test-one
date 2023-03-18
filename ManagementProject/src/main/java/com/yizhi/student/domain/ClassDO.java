@@ -1,5 +1,7 @@
 package com.yizhi.student.domain;
 
+import lombok.ToString;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -12,6 +14,7 @@ import java.util.Date;
  * @email 499345515@qq.com
  * @date 2019-07-29 14:20:37
  */
+@ToString
 public class ClassDO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	

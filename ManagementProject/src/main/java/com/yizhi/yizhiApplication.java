@@ -2,6 +2,7 @@ package com.yizhi;
 
 import com.yizhi.common.utils.NewmanUtils;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,6 +14,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -26,6 +28,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableCaching
 @EnableAsync
 public class yizhiApplication extends SpringBootServletInitializer{
+
+
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
@@ -42,7 +46,6 @@ public class yizhiApplication extends SpringBootServletInitializer{
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(yizhiApplication.class, args);
         System.out.println("ヾ(◍°∇°◍)ﾉﾞ    yizhi启动成功      ヾ(◍°∇°◍)ﾉﾞ\n");
-
         NewmanUtils.run(args,context);
     }
 

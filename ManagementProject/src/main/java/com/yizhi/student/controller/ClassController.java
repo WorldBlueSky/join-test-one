@@ -22,6 +22,7 @@ import com.yizhi.student.service.ClassService;
 import com.yizhi.common.utils.PageUtils;
 import com.yizhi.common.utils.Query;
 import com.yizhi.common.utils.R;
+import java.util.*;
 
 /**
  * 班级表
@@ -47,6 +48,7 @@ public class ClassController {
 	@GetMapping("/list")
 	@RequiresPermissions("student:class:class")
 	public PageUtils list(@RequestParam Map<String, Object> params){
+
 		//查询列表数据
 		if (params.get("sort")!=null) {
 			params.put("sort",BeanHump.camelToUnderline(params.get("sort").toString()));
@@ -54,6 +56,14 @@ public class ClassController {
 		//查询列表数据
         Query query = new Query(params);
 		List<ClassDO> classList = classService.list(query);
+
+//		System.out.println("返回的list结果是!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//		for (int i = 0; i < classList.size(); i++) {
+//			ClassDO classDO = new ClassDO();
+//			classDO = classList.get(i);
+//			System.out.println(classDO.toString());
+//		}
+
 		int total = classService.count(query);
 		PageUtils pageUtils = new PageUtils(classList, total,query.getCurrPage(),query.getPageSize());
 		return pageUtils;
@@ -81,7 +91,11 @@ public class ClassController {
 	@PostMapping("/save")
 	@RequiresPermissions("student:class:add")
 	public R save( ClassDO classt){
+//		System.out.println("前端返回的classt对象的内容是===================");
+//		System.out.println(classt);
+
 		if(classService.save(classt)>0){
+
 			return R.ok();
 		}
 		return R.error();

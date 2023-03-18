@@ -14,8 +14,9 @@
  Date: 06/04/2022 15:30:01
 */
 
-SET NAMES utf8mb4;
+# SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
 
 -- ----------------------------
 -- Table structure for blog_content

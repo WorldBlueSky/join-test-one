@@ -67,7 +67,8 @@
 		  		  <if test="classNum != null and classNum != ''"> and a.class_num = #{classNum} </if>
 		  		</where>
 	</select>
-	 
+
+<!--	只是普通的新增方法-->
 	<insert id="save" parameterType="com.yizhi.student.domain.ClassDO" useGeneratedKeys="true" keyProperty="id">
 		insert into sys_class
 		(
@@ -86,7 +87,8 @@
 			#{classNum}
 		)
 	</insert>
-	 
+
+<!--	只是普通的新增方法-->
 	<update id="update" parameterType="com.yizhi.student.domain.ClassDO">
 		update sys_class 
 		<set>
@@ -98,11 +100,13 @@
 		</set>
 		where id = #{id}
 	</update>
-	
+
+<!--	进行指定的删除id对应的信息-->
 	<delete id="remove">
 		delete from sys_class where id = #{value}
 	</delete>
-	
+
+<!--	批量删除-->
 	<delete id="batchRemove">
 		delete from sys_class where id in 
 		<foreach item="id" collection="array" open="(" separator="," close=")">
