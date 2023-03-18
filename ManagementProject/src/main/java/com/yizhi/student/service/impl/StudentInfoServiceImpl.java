@@ -1,7 +1,5 @@
 package com.yizhi.student.service.impl;
 
-import com.yizhi.common.redis.shiro.RedisCache;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +13,8 @@ import com.yizhi.student.domain.StudentInfoDO;
 import com.yizhi.student.service.StudentInfoService;
 
 
-
 @Service
 public class StudentInfoServiceImpl implements StudentInfoService {
-
-//    @Autowired
-//	RedisCache<String, Object> redisCache;
 
 	@Autowired
 	private StudentInfoDao studentInfoDao;
@@ -29,7 +23,6 @@ public class StudentInfoServiceImpl implements StudentInfoService {
 	public StudentInfoDO get(Integer id){
 		return studentInfoDao.get(id);
 	}
-
 
 	@Override
 	public List<StudentInfoDO> list(Map<String, Object> map){
@@ -41,9 +34,6 @@ public class StudentInfoServiceImpl implements StudentInfoService {
 
 		return studentInfoDao.list(map);
 	}
-
-	//"===================================================================================="
-
 
 	@Override
 	public int count(Map<String, Object> map){
