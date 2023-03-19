@@ -88,10 +88,17 @@ public class StudentInfoController {
 	@RequiresPermissions("student:studentInfo:add")
 	public R save(StudentInfoDO studentInfoDO,@CookieValue("yizhi.session.id") String sessionId){
         // 1、校验参数是否存在且正常
-		if(studentInfoDO.getClassId()==null|| studentInfoDO.getStudentId()==null||
-				studentInfoDO.getTomajor()==null || studentInfoDO.getTocollege()==null||
-				studentInfoDO.getStudentSex()==null||studentInfoDO.getStudentSex().equals("")
-		){
+		if(studentInfoDO.getStudentId()==null || studentInfoDO.getStudentId().equals("")){
+			return R.error();
+		}
+		if(studentInfoDO.getClassId() == null){
+			return R.error();
+		}
+		if(studentInfoDO.getTocollege() == null){
+			return R.error();
+		}
+
+		if(studentInfoDO.getTomajor() == null){
 			return R.error();
 		}
 
