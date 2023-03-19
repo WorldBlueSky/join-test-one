@@ -1,5 +1,6 @@
 package com.yizhi.student.controller;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -38,6 +39,7 @@ import com.yizhi.student.domain.StudentInfoDO;
 import com.yizhi.student.service.StudentInfoService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -50,9 +52,6 @@ public class StudentInfoController {
 
 	@Autowired
 	private StudentInfoService studentInfoService;
-
-	@Autowired
-	public SessionService sessionService;
 
     @Autowired
 	public RedisManager redisManager;
@@ -88,16 +87,24 @@ public class StudentInfoController {
 	@PostMapping("/save")
 	@RequiresPermissions("student:studentInfo:add")
 	public R save(StudentInfoDO studentInfoDO,@CookieValue("yizhi.session.id") String sessionId){
-        UserDO userDO = getCurrentUser(sessionId);
+        // 1、校验参数是否存在且正常
+		if(studentInfoDO.getClassId()==null|| studentInfoDO.getStudentId()==null||
+				studentInfoDO.getTomajor()==null || studentInfoDO.getTocollege()==null||
+				studentInfoDO.getStudentSex()==null||studentInfoDO.getStudentSex().equals("")
+		){
+			return R.error();
+		}
 
+		//2、查询当前用户的登录信息
+		UserDO userDO = getCurrentUser(sessionId);
         int userId = userDO.getUserId().intValue();
         String name = userDO.getName();
 		//System.out.println("执行新增操作的用户id是:======="+userId);
 		//System.out.println("执行新增操作的真实姓名是:========"+name);
-
         studentInfoDO.setAddUserid(userId);
         studentInfoDO.setAddName(name);
 
+        //3、执行新增操作
 		if(studentInfoService.save(studentInfoDO)>0){
 	    	return R.ok();
 		}
@@ -110,12 +117,12 @@ public class StudentInfoController {
 	@ResponseBody
 	@GetMapping("/list")
 	@RequiresPermissions("student:studentInfo:studentInfo")
-	public PageUtils list(@RequestParam Map<String, Object> params){
-		//查询列表数据
+	public PageUtils list(@RequestParam Map<String, Object> params, HttpServletResponse response) throws IOException {
+		//1、查询列表数据
 		if (params.get("sort")!=null) {
 			params.put("sort",BeanHump.camelToUnderline(params.get("sort").toString()));
 		}
-		//查询列表数据
+		//2、查询列表数据
 		Query query = new Query(params);
 		List<StudentInfoDO> classList = studentInfoService.list(query);
 
@@ -126,8 +133,15 @@ public class StudentInfoController {
 //		}
 //		System.out.println("=======================================================");
 
+		//3、查询总条数
 		int total = studentInfoService.count(query);
+
+		//4、构建分页对象
 		PageUtils pageUtils = new PageUtils(classList, total,query.getCurrPage(),query.getPageSize());
+
+		response.setStatus(200);
+		pageUtils.setCode(0);
+
 		return pageUtils;
 	}
 
@@ -140,19 +154,25 @@ public class StudentInfoController {
 	@PostMapping("/update")
 	@RequiresPermissions("student:studentInfo:edit")
 	public R update(StudentInfoDO studentInfo,@CookieValue("yizhi.session.id") String sessionId){
-		UserDO userDO = getCurrentUser(sessionId);
+		// 1、校验参数是否存在且正常
+		if(studentInfo.getClassId()==null|| studentInfo.getStudentId()==null||
+				studentInfo.getTomajor()==null || studentInfo.getTocollege()==null||
+				studentInfo.getStudentSex()==null||studentInfo.getStudentSex().equals("")
+		){
+			return R.error();
+		}
 
+
+		UserDO userDO = getCurrentUser(sessionId);
 		int userId = userDO.getUserId().intValue();
 		String name = userDO.getName();
-
 		//System.out.println("执行修改操作的用户id是:======="+useId);
 		//System.out.println("执行修改操作的真实姓名是:========"+name);
-
 		studentInfo.setEditUserid(userId);
 		studentInfo.setEditName(name);
 
         studentInfoService.update(studentInfo);
-		return R.ok();
+        return R.ok();
 	}
 
 	/**
@@ -163,8 +183,25 @@ public class StudentInfoController {
 	@ResponseBody
 	@RequiresPermissions("student:studentInfo:remove")
 	public R remove(Integer id){
-		studentInfoService.remove(id);
-		return R.ok();
+		//1、校验参数，为null操作失败
+		if(id == null){
+			return R.error();
+		}
+
+		//2、如果id不存在的话，操作失败
+		StudentInfoDO studentInfoDO = studentInfoService.get(id);
+		if(studentInfoDO==null){
+			return R.error();
+		}
+
+		//3、执行删除操作
+		int ret = studentInfoService.remove(id);
+
+		if(ret>0){
+			return R.ok();
+		}
+
+		return R.error();
 	}
 	
 	/**
@@ -174,8 +211,14 @@ public class StudentInfoController {
 	@PostMapping( "/batchRemove")
 	@ResponseBody
 	@RequiresPermissions("student:studentInfo:batchRemove")
-	public R remove(@RequestParam("ids[]") Integer[] ids){
-         studentInfoService.batchRemove(ids);
+	public R remove(@RequestParam("ids[]") Integer[] ids,HttpServletResponse response){
+		int ret = studentInfoService.batchRemove(ids);
+		response.setStatus(200);
+
+		if(ret!=ids.length){
+			// 可能存在错误的id，导致批量删除没有全部成功
+			return R.error();
+		}
 		return R.ok();
 	}
 
