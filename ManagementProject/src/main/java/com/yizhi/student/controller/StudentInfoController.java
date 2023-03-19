@@ -59,7 +59,7 @@ public class StudentInfoController {
 	/**
 	 * 查询当前登录用户 UserDo 对象
 	 * @param sessionId 浏览器传递的cookie,用来找到redis中存储的session对象
-	 * @return
+	 * @return 返回当前登录的对象
 	 */
 	public UserDO getCurrentUser(String sessionId){
 		String s = "yizhi_shiro_redis_session:"+sessionId;
@@ -88,17 +88,10 @@ public class StudentInfoController {
 	@RequiresPermissions("student:studentInfo:add")
 	public R save(StudentInfoDO studentInfoDO,@CookieValue("yizhi.session.id") String sessionId){
         // 1、校验参数是否存在且正常
-		if(studentInfoDO.getStudentId()==null || studentInfoDO.getStudentId().equals("")){
-			return R.error();
-		}
-		if(studentInfoDO.getClassId() == null){
-			return R.error();
-		}
-		if(studentInfoDO.getTocollege() == null){
-			return R.error();
-		}
-
-		if(studentInfoDO.getTomajor() == null){
+		if(studentInfoDO.getStudentId()==null || studentInfoDO.getStudentId().equals("")||
+				studentInfoDO.getClassId() == null||studentInfoDO.getTocollege() == null||
+				studentInfoDO.getTomajor() == null
+		){
 			return R.error();
 		}
 
@@ -124,7 +117,7 @@ public class StudentInfoController {
 	@ResponseBody
 	@GetMapping("/list")
 	@RequiresPermissions("student:studentInfo:studentInfo")
-	public PageUtils list(@RequestParam Map<String, Object> params, HttpServletResponse response) throws IOException {
+	public PageUtils list(@RequestParam Map<String, Object> params) throws IOException {
 		//1、查询列表数据
 		if (params.get("sort")!=null) {
 			params.put("sort",BeanHump.camelToUnderline(params.get("sort").toString()));
@@ -146,9 +139,6 @@ public class StudentInfoController {
 		//4、构建分页对象
 		PageUtils pageUtils = new PageUtils(classList, total,query.getCurrPage(),query.getPageSize());
 
-		response.setStatus(200);
-		pageUtils.setCode(0);
-
 		return pageUtils;
 	}
 
@@ -168,7 +158,6 @@ public class StudentInfoController {
 		){
 			return R.error();
 		}
-
 
 		UserDO userDO = getCurrentUser(sessionId);
 		int userId = userDO.getUserId().intValue();
@@ -203,7 +192,6 @@ public class StudentInfoController {
 
 		//3、执行删除操作
 		int ret = studentInfoService.remove(id);
-
 		if(ret>0){
 			return R.ok();
 		}
@@ -218,10 +206,8 @@ public class StudentInfoController {
 	@PostMapping( "/batchRemove")
 	@ResponseBody
 	@RequiresPermissions("student:studentInfo:batchRemove")
-	public R remove(@RequestParam("ids[]") Integer[] ids,HttpServletResponse response){
+	public R remove(@RequestParam("ids[]") Integer[] ids){
 		int ret = studentInfoService.batchRemove(ids);
-		response.setStatus(200);
-
 		if(ret!=ids.length){
 			// 可能存在错误的id，导致批量删除没有全部成功
 			return R.error();
